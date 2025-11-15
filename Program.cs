@@ -83,23 +83,39 @@ namespace SepAxisThm
     {
         static int Main(string[] args)
         {
+            // Object2D triangle1 = new Object2D();
+            // triangle1.AddVertex(0, 3);
+            // triangle1.AddVertex(1, 3);
+            // triangle1.AddVertex(0, 2);
+            // /*triangle1.AddVertex(1, 1);
+            // triangle1.AddVertex(1, 2);
+            // triangle1.AddVertex(4, 1);*/
+            // triangle1.MakeLine(0, 1);
+            // triangle1.MakeLine(1, 2);
+            // triangle1.MakeLine(2, 0);
+            // Object2D triangle2 = new Object2D();
+            // /*triangle2.AddVertex(3, 1);
+            // triangle2.AddVertex(3, 2);
+            // triangle2.AddVertex(4, 1);*/
+            // triangle2.AddVertex(3, 0);
+            // triangle2.AddVertex(3, 1);
+            // triangle2.AddVertex(2, 0);
+            // triangle2.MakeLine(0, 1);
+            // triangle2.MakeLine(1, 2);
+            // triangle2.MakeLine(2, 0);
+
             Object2D triangle1 = new Object2D();
-            triangle1.AddVertex(0, 3);
-            triangle1.AddVertex(1, 3);
-            triangle1.AddVertex(0, 2);
-            /*triangle1.AddVertex(1, 1);
+            triangle1.AddVertex(0, 0);
+            triangle1.AddVertex(2, 0);
             triangle1.AddVertex(1, 2);
-            triangle1.AddVertex(4, 1);*/
             triangle1.MakeLine(0, 1);
             triangle1.MakeLine(1, 2);
             triangle1.MakeLine(2, 0);
+
             Object2D triangle2 = new Object2D();
-            /*triangle2.AddVertex(3, 1);
-            triangle2.AddVertex(3, 2);
-            triangle2.AddVertex(4, 1);*/
-            triangle2.AddVertex(3, 0);
+            triangle2.AddVertex(1, 1);   // inside the first triangle
             triangle2.AddVertex(3, 1);
-            triangle2.AddVertex(2, 0);
+            triangle2.AddVertex(2, 3);
             triangle2.MakeLine(0, 1);
             triangle2.MakeLine(1, 2);
             triangle2.MakeLine(2, 0);
@@ -113,12 +129,13 @@ namespace SepAxisThm
             //deduplication if needed...
 
             float obj1_max, obj1_min, obj2_max, obj2_min;
-            bool found = false;
-
             obj1_max = -999;
             obj1_min = 999;
             obj2_max = -999;
             obj2_min = 999;
+
+            Vector2D sepaxisT = new(0, 0);
+            float mindist = 999;
 
             foreach (var candline in allnormals)
             {
@@ -143,14 +160,48 @@ namespace SepAxisThm
                     if (d < obj2_min) obj2_min = d;
                 }
                 System.Console.WriteLine($"Max {obj2_max} Min {obj2_min}");
-                if (obj1_max < obj2_min || obj2_max < obj1_min) // not overlapped
+                /*
+                bool ovcheck = obj1_max < obj2_min || obj2_max < obj1_min;
+                float ovdist = 0;
+                if (obj2_max < obj1_max && obj1_min < obj2_min)
                 {
-                    Console.WriteLine($"Non-Overlapping Axis Found! LineNormal: {candline}");
-                    break;
+                    ovdist = obj1_max - obj1_min;
+                    Console.WriteLine($"Overlap(Fully Inside) on: {candline} Distance {obj1_max - obj1_min}");
+                }
+                else if (obj1_max < obj2_max && obj2_min < obj1_min)
+                {
+                    ovdist = obj2_max - obj2_min;
+                    Console.WriteLine($"Overlap(Fully Inside) on: {candline} Distance {obj2_max - obj2_min}");
+                }
+                else if (!ovcheck && obj2_min < obj1_max)
+                {
+                    ovdist = obj1_max - obj2_min;
+                    Console.WriteLine($"Overlap on: {candline} Distance {obj1_max - obj2_min}");
+                }
+                else if (!ovcheck && obj1_min < obj2_max)
+                {
+                    ovdist = obj2_max - obj1_min;
+                    Console.WriteLine($"Overlap on: {candline} Distance {obj2_max - obj1_min}");
                 }
 
+                if (ovdist != 0 && ovdist < mindist)
+                {
+                    mindist = ovdist;
+                    sepaxis = candline;
+                }*/
+                float overlap = Math.Min(obj1_max, obj2_max) - Math.Max(obj1_min, obj2_min); //GPT code - why does it work?
+                if(overlap>0)
+                {
+                    System.Console.WriteLine($"Overlap on axis {candline}, Distance {overlap}");
+                }
+                if(overlap<mindist)
+                {
+                    mindist=overlap;
+                    sepaxisT=candline;
+                }
             }
-
+            if (sepaxisT.Length > 0)
+                System.Console.WriteLine($"Seperation Axis Normal {sepaxisT} with distance {mindist}");
 
             return 0;
         }
